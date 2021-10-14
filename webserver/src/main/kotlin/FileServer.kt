@@ -1,4 +1,5 @@
 import ru.sber.filesystem.VFilesystem
+import ru.sber.filesystem.VPath
 import java.io.IOException
 import java.net.ServerSocket
 
@@ -20,19 +21,15 @@ class FileServer {
      *                     IOExceptions during normal operation.
      */
     @Throws(IOException::class)
-    fun run(socket: ServerSocket, fs: VFilesystem) {
-
+    fun run(serverSocket: ServerSocket, fs: VFilesystem) {
         /**
          * Enter a spin loop for handling client requests to the provided
          * ServerSocket object.
          */
         while (true) {
 
-            // TODO Delete this once you start working on your solution.
-            //throw new UnsupportedOperationException();
-
             // TODO 1) Use socket.accept to get a Socket object
-
+            val socket = serverSocket.accept()
 
             /*
             * TODO 2) Using Socket.getInputStream(), parse the received HTTP
@@ -43,8 +40,11 @@ class FileServer {
             *
             *     GET /path/to/file HTTP/1.1
             */
-
-
+            val input = socket.getInputStream()
+            val header = input.bufferedReader().readLine()
+            val command = header.split(" ")[0]
+            val path = header.split(" ")[1]
+            val httpVersion = header.split(" ")[2]
             /*
              * TODO 3) Using the parsed path to the target file, construct an
              * HTTP reply and write it to Socket.getOutputStream(). If the file
@@ -65,6 +65,20 @@ class FileServer {
              *
              * Don't forget to close the output stream.
              */
+            var errorCode = ""
+            val content = fs.readFile(VPath(path))
+            if (content == null)
+                errorCode = "404 Not Found"
+            else
+                errorCode = "200 OK"
+            val answer = "$httpVersion $errorCode\r\n" +
+                    "Server: FileServer\r\n" +
+                    "\r\n" +
+                    "$content\r\n"
+            val output = socket.getOutputStream()
+            output.write(answer.toByteArray())
+            output.flush()
+            output.close()
         }
     }
 }
