@@ -78,7 +78,7 @@ class FileServer {
             val output = socket.getOutputStream()
             output.write(answer.toByteArray())
             output.flush()
-            output.close()
+            socket.close()
         }
     }
 }
