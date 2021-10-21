@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping
 
 @Controller
 class AppController {
+    val addressBook = AddressBook()
+
     @GetMapping("/app")
     fun toAppPage(): String {
         return "app"
