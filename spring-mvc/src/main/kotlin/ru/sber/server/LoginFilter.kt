@@ -16,8 +16,10 @@ class MethodLoggingFilter : HttpFilter() {
     @Throws(IOException::class, ServletException::class)
     override fun doFilter(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         for(cookie in request.cookies)
-            if (cookie.name == "user")
+            if (cookie.name == "user") {
                 chain.doFilter(request, response)
+                return
+            }
         response.sendRedirect("/login")
     }
 }
