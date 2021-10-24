@@ -2,6 +2,7 @@ package ru.sber.server
 
 import org.springframework.core.annotation.Order
 import java.io.IOException
+import java.time.format.DateTimeFormatter
 import javax.servlet.DispatcherType
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
@@ -17,7 +18,7 @@ class LoginFilter : HttpFilter() {
     override fun doFilter(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         if (request.cookies != null) {
             for (cookie in request.cookies) {
-                if (cookie.name == "user") {
+                if (cookie.name == "auth") {
                     chain.doFilter(request, response)
                     return
                 }

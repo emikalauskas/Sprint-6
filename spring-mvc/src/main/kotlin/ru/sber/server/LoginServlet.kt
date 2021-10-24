@@ -1,6 +1,7 @@
 package ru.sber.server
 
 import org.springframework.stereotype.Component
+import java.time.Instant
 import javax.servlet.annotation.WebServlet
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServlet
@@ -21,7 +22,7 @@ class LoginServlet : HttpServlet() {
         val login = req.getParameter("login")
         val password = req.getParameter("password")
         if (login == this.login && password == this.password) {
-            val cookie = Cookie("user", "admin")
+            val cookie = Cookie("auth", Instant.now().toEpochMilli().toString())
             cookie.maxAge = 60
             resp.addCookie(cookie)
             resp.sendRedirect("/app/list")
