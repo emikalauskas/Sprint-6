@@ -11,15 +11,18 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @WebFilter(urlPatterns = ["/app/*"], dispatcherTypes = [DispatcherType.REQUEST])
-@Order(1)
-class MethodLoggingFilter : HttpFilter() {
+@Order(2)
+class LoginFilter : HttpFilter() {
     @Throws(IOException::class, ServletException::class)
     override fun doFilter(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
-        for(cookie in request.cookies)
-            if (cookie.name == "user") {
-                chain.doFilter(request, response)
-                return
+        if (request.cookies != null) {
+            for (cookie in request.cookies) {
+                if (cookie.name == "user") {
+                    chain.doFilter(request, response)
+                    return
+                }
             }
+        }
         response.sendRedirect("/login")
     }
 }
